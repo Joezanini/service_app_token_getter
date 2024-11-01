@@ -22,6 +22,8 @@ async function exchangeCodeForTokens(code) {
                 }
             }
         );
+        process.env['INT_ACCESSTOKEN'] = response.data.access_token;
+        process.env['INT_REFRESHTOKEN'] = response.data.refresh_token;
         return response.data;
     } catch (error) {
         console.error('Error obtaining tokens:', error);
@@ -71,7 +73,7 @@ function getOrgId(encodedvalue) {
 const application_Id = generateApplicationId(process.env.SA_CLIENTID);
 
 // Function to create a Webex webhook for service app authorized event
-async function createServiceAppAuthorizedWebhook(token) {
+async function createServiceAppAuthorizedWebhook() {
     console.log('Creating webhook for service app authorized event');
     try {
         const response = await axios.post(
@@ -84,7 +86,7 @@ async function createServiceAppAuthorizedWebhook(token) {
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${process.env.INT_ACCESSTOKEN}`,
                     'Content-Type': 'application/json'
                 }
             }
@@ -97,7 +99,7 @@ async function createServiceAppAuthorizedWebhook(token) {
             const tokens = await refreshTokens();
             process.env['INT_ACCESSTOKEN'] = tokens.access_token;
             process.env['INT_REFRESHTOKEN'] = tokens.refresh_token;
-            createServiceAppAuthorizedWebhook(process.env.INT_ACCESSTOKEN);
+            createServiceAppAuthorizedWebhook();
         } else {
             throw error;
         }
@@ -153,7 +155,7 @@ const server = http.createServer(async (req, res) => {
         if (code) {
             try {
                 const tokens = await exchangeCodeForTokens(code);
-                createServiceAppAuthorizedWebhook(tokens.access_token);
+                createServiceAppAuthorizedWebhook();
             } catch (error) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end('Error exchanging code for tokens');
