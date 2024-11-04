@@ -3,18 +3,21 @@ const axios = require('axios');
 const base64url = require('base64url');
 var Url = require('url');
 require('dotenv').config();
+console.log(process.env);
 
 // Function to exchange code for tokens when initiating OAuth flow
 async function exchangeCodeForTokens(code) {
+    console.log('client id:', process.env.INT_CLIENTID);
+    console.log('client secret:', process.env.INT_CLIENTSECRET);
     try {
         const response = await axios.post(
-            tokenEndpoint,
+            process.env.TOKEN_ENDPOINT,
             new URLSearchParams({
                 grant_type: 'authorization_code',
                 code: code,
-                redirect_uri: 'http://localhost:3000/callback',
                 client_id: process.env.INT_CLIENTID,
-                client_secret: process.env.INT_CLIENTSECRET
+                client_secret: process.env.INT_CIENTSECRET,
+                redirect_uri: 'http://localhost:3000/redirect'
             }),
             {
                 headers: {
@@ -79,8 +82,8 @@ async function createServiceAppAuthorizedWebhook() {
         const response = await axios.post(
             'https://webexapis.com/v1/webhooks',
             {
-                name: 'Service App Authorized Webhook',
-                targetUrl: 'https://rnaxo-2601-642-4900-12f0-f040-ba00-646d-21f2.a.free.pinggy.link',
+                name: 'Service App Authorized Webhook for Webex',
+                targetUrl: process.env.TARGET_URL,
                 resource: 'serviceApp',
                 event: 'authorized',
             },
@@ -148,10 +151,10 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end('OK');
         });
-    } else if (req.method === 'GET' && req.url.startsWith('/callback')) {
+    } else if (req.method === 'GET' && req.url.startsWith('/redirect')) {
         const queryObject = Url.parse(req.url, true).query;
         const code = queryObject.code;
-
+        console.log('Code:', code);
         if (code) {
             try {
                 const tokens = await exchangeCodeForTokens(code);
