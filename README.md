@@ -6,7 +6,7 @@ This application is a Webex Integration that is intended to be used by a develop
 The above diagram outlines a high-level overview of the intended use case for this application. It is a companion app to a
 Webex Service App that is owned, hosted and used by the Webex Developer.
 
-This Node.js server is designed to handle OAuth flows, create webhooks for Webex events, and manage token exchanges and refreshes.
+This Node.js server is designed to handle OAuth flows from a Webex Integration, create webhooks for Webex events, and manage token exchanges and refreshes.
 The server listens for HTTP requests and processes them to handle authorization and token management.
 
 ## Prerequisites
@@ -14,6 +14,18 @@ The server listens for HTTP requests and processes them to handle authorization 
 - [Node.js](https://nodejs.org/) (version 12.x or higher)
 - [npm](https://www.npmjs.com/get-npm)
 - [dotenv](https://www.npmjs.com/package/dotenv)
+- [Webex Integration](https://developer.webex.com/docs/integrations)
+- [Webex Service App](https://developer.webex.com/docs/service-apps)
+
+The above Integration and Service App Credentials can be plugged into the respective environment variable
+in .env.example.
+
+The Integration needs to be registered with scopes spark:all and spark:applications_token selected for
+registering [Webex webhooks](https://developer.webex.com/docs/api/v1/webhooks).
+
+The Service App needs to be scoped according to the permissions and licenses of the org in use. For testing
+please request a developer sandbox [here](https://developer.webex.com/docs/developer-sandbox-guide). Use the
+administrator for the sandbox as a developer for testing.
 
 ## Installation
 
@@ -52,6 +64,10 @@ The server listens for HTTP requests and processes them to handle authorization 
    - `POST /webhook`: Endpoint to handle webhook events.
    - `GET /redirect`: Endpoint to handle redirection and exchange code for tokens during the OAuth flow.
 
+   The webhooks need https enabled to listen for events. To test locally, use [ngrok](https://ngrok.com/)
+   or [Pinggy](https://pinggy.io/) to tunnle to `/webhook` endpoints. Make sure to append the `/webhook`
+   when using the url produced by these apps to populate the `target_url` `.env` variable in `.env.example`.
+
 ## Code Overview
 
 ### Dependencies
@@ -69,12 +85,13 @@ The server listens for HTTP requests and processes them to handle authorization 
 - **generateApplicationId**: Generates application ID based on the client ID.
 - **getOrgId**: Decodes the organization ID from a base64-encoded value.
 - **createServiceAppAuthorizedWebhook**: Creates a webhook for the service app authorized event.
+- **createServiceAppDeauthorizedWebhook**: Creates a webhook for the service app deauthorized event.
 
 ### Server
 
 The server listens on the port specified in the environment variables or defaults to port 3000. It handles the following endpoints:
 
-- **/webhook (POST)**: Processes webhook events, primarily focusing on the `authorized` event.
+- **/webhook (POST)**: Processes webhook events, primarily focusing on the `authorized` and `deauthorized` events.
 - **/redirect (GET)**: Handles OAuth redirection and token exchange.
 
 ### Example `.env` file
