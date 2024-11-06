@@ -2,8 +2,12 @@
 
 ## Overview
 This application is a Webex Integration that is intended to be used by a developer that manages and owns a Webex Service App.
+![](./images/serviceapptokengetter.svg)
+The above diagram outlines a high-level overview of the intended use case for this application. It is a companion app to a
+Webex Service App that is owned, hosted and used by the Webex Developer.
 
-This Node.js server is designed to handle OAuth flows, create webhooks for Webex events, and manage token exchanges and refreshes. The server listens for HTTP requests and processes them to handle authorization and token management.
+This Node.js server is designed to handle OAuth flows, create webhooks for Webex events, and manage token exchanges and refreshes.
+The server listens for HTTP requests and processes them to handle authorization and token management.
 
 ## Prerequisites
 

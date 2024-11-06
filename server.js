@@ -109,6 +109,40 @@ async function createServiceAppAuthorizedWebhook() {
     }
 }
 
+// Function to create a Webex webhook for service app de-authorized event
+async function createServiceAppDeAuthorizedWebhook() {
+    console.log('Creating webhook for service app de-authorized event');
+    try {
+        const response = await axios.post(
+            'https://webexapis.com/v1/webhooks',
+            {
+                name: 'Service App Deauthorized Webhook for Webex',
+                targetUrl: process.env.TARGET_URL,
+                resource: 'serviceApp',
+                event: 'deauthorized',
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.INT_ACCESSTOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        console.log('Webhook created successfully:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating webhook:', error);
+        if (error.response.status === 401) {
+            const tokens = await refreshTokens();
+            process.env['INT_ACCESSTOKEN'] = tokens.access_token;
+            process.env['INT_REFRESHTOKEN'] = tokens.refresh_token;
+            createServiceAppAuthorizedWebhook();
+        } else {
+            throw error;
+        }
+    }
+}
+
 // Create an HTTP server
 const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && req.url === '/webhook') {
@@ -146,6 +180,8 @@ const server = http.createServer(async (req, res) => {
                 } catch (error) {
                     console.error('Error obtaining token:', error);
                 }
+            } else if (event.event === 'deauthorized') {
+                console.log('Service app de-authorized');
             }
 
             res.writeHead(200, { 'Content-Type': 'text/plain' });
