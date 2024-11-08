@@ -9,6 +9,8 @@ Webex Service App that is owned, hosted and used by the Webex Developer.
 This Node.js server is designed to handle OAuth flows from a Webex Integration, create webhooks for Webex events, and manage token exchanges and refreshes.
 The server listens for HTTP requests and processes them to handle authorization and token management.
 
+Watch this [Vidcast](https://app.vidcast.io/share/839a6f46-1774-4bc1-b342-8c0df74ecfb3) for a demo on getting started!
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (version 12.x or higher)
