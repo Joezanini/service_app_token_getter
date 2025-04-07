@@ -59,7 +59,7 @@ administrator for the sandbox as a developer for testing.
 
 1. **Start the server**:
     ```sh
-    node <your-node-file>.js
+    node server.js
     ```
 
 2. **Endpoints**:
