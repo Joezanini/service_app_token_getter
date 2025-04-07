@@ -22,7 +22,7 @@ Watch this [Vidcast](https://app.vidcast.io/share/839a6f46-1774-4bc1-b342-8c0df7
 The above Integration and Service App Credentials can be plugged into the respective environment variable
 in .env.example.
 
-The Integration needs to be registered with scopes spark:all and spark:applications_token selected for
+The Integration needs to be registered with scopes spark:all, spark:applications_token, application:webhooks_write, and application:webhooks_read selected for
 registering [Webex webhooks](https://developer.webex.com/docs/api/v1/webhooks).
 
 The Service App needs to be scoped according to the permissions and licenses of the org in use. For testing
@@ -62,7 +62,12 @@ administrator for the sandbox as a developer for testing.
     node server.js
     ```
 
-2. **Endpoints**:
+2. **Access the application**:
+   Open your web browser and navigate to the integration registration page and retrieve the authorization url from the black box on the form.
+   ![Authorization URL](./images/authurl.png)
+    Open a new tab incognito and paste the authorization url into the browser and authorize the integration using the developer that registered the integration credentials. This will redirect to the redirect url specified for example `http://localhost:3000/redirect`.
+
+3. **Endpoints**:
    - `POST /webhook`: Endpoint to handle webhook events.
    - `GET /redirect`: Endpoint to handle redirection and exchange code for tokens during the OAuth flow.
 
@@ -105,8 +110,11 @@ INT_CLIENTSECRET=your_integration_client_secret
 SA_CLIENTID=your_service_app_client_id
 SA_CLIENTSECRET=your_service_app_client_secret
 TOKEN_ENDPOINT=https://your-token-endpoint
-TARGET_URL=https://your-target-url
+TARGET_URL=https://your-target-url // ngrok or pinggy url
 ```
+
+## Troubleshooting
+if you mess up and need to remove the webhook from the integration you can get the webhook id from the console log and run a delete request to the Webex DELETE A Webexhook [endpoint](https://developer.webex.com/docs/api/v1/webhooks/delete-a-webhook) using the Try It feature on the developer portal. If you need an alternate way to get a webhook id you can use the LIST webhooks [endpoint](https://developer.webex.com/docs/api/v1/webhooks/list-webhooks) to get a list of webhooks for the integration and find the webhook id.
 
 ## Contributing
 
