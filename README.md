@@ -52,8 +52,9 @@ administrator for the sandbox as a developer for testing.
     INT_ACCESSTOKEN = ''
     INT_REFRESHTOKEN = ''
     TOKEN_ENDPOINT = 'https://webexapis.com/v1/access_token'
-    TARGET_URL = 'https://mywebhookurl.com/webhook' //make sure to append the /webhook to the url as the server is listening at that endpoint
+    TARGET_URL = 'https://mywebhookurl.com/webhook'
     ```
+    **make sure that the TARGET_URL has the /webhook appended as the server is listening at that endpoint**
 
 ## Usage
 
